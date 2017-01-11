@@ -2,54 +2,28 @@ jQuery(document).ready(function ($) {
     
 var arrayDates = $('[data-interval]');
 
-$.each(arrayDates, function(){
+$.each(arrayDates, function(){ 
   var currentObj = $(this); 
-  var dates = $(this).attr('data-interval');
+  var dates = $(this).attr('data-interval');     
   var arr = dates.split(','); 
-  var day = divide(arr, currentObj);   
+  divide(arr, currentObj);   
 });
 
-function divide (data, currentObj){
+function divide (data, currentObj){ 
+    console.log('data1',data);
+    data = data.sort();
+    console.log('data2',data);
     var dateStart = data[0];
     var dateEnd = data[data.length-1];
-    dateStart = dateStart.split('T')[0];
-    dateEnd = dateEnd.split('T')[0];
-    var day = makeDifferent(dateStart,dateEnd, currentObj);
-    return day;
-}
-
-function yDate(data){
-   var myNewDate = new Date(data); 
-    return myNewDate.getFullYear();    
-}
-
-function mDate(data){
-   var myNewDate = new Date(data);
-    return myNewDate.getMonth();   
-}
-
-function dDate(data){
-   var myNewDate = new Date(data); 
-   return myNewDate.getDate();    
-}
-
-function makeYMD(first, second, daysDifferent, currentObj){
-    var yDateStart = yDate(first);
-    var yDateEnd = yDate(second); 
-    var mDateStart = mDate(first);
-    var mDateEnd = mDate(second); 
-    var dDateStart = dDate(first);
-    var dDateEnd = dDate(second); 
-    makeView(yDateStart, yDateEnd, mDateStart, mDateEnd, dDateStart, dDateEnd, daysDifferent, currentObj);
+    var day = makeDifferent(dateStart.split('T')[0],dateEnd.split('T')[0], currentObj);    
 }
 
 function makeDifferent(first, second, currentObj){
     var converted1 = Date.parse(first);
     var converted2 = Date.parse(second);  
     var different = converted2 - converted1;
-    var day = ( ( ( different/1000 )/60 )/60 )/24; 
-    makeYMD(converted1, converted2, day, currentObj);
-    return day;
+    var daysDifferent = ( ( ( different/1000 )/60 )/60 )/24; 
+    makeView(converted1, converted2, daysDifferent, currentObj);
 }
 
 function makeTextMonth(data){
@@ -57,7 +31,15 @@ function makeTextMonth(data){
     return months[data]; 
 }
  
-function makeView(yDateStart, yDateEnd, mDateStart, mDateEnd, dDateStart, dDateEnd, differentData, currentObj){
+function makeView(first, second, differentData, currentObj){
+    
+    var yDateStart = new Date(first).getFullYear();
+    var yDateEnd = new Date(second).getFullYear();
+    var mDateStart = new Date(first).getMonth();
+    var mDateEnd = new Date(second).getMonth(); 
+    var dDateStart = new Date(first).getDate();
+    var dDateEnd = new Date(second).getDate(); 
+        
     var firstData = '';
     var secondData = '';
     if(yDateStart != yDateEnd){
@@ -72,14 +54,7 @@ function makeView(yDateStart, yDateEnd, mDateStart, mDateEnd, dDateStart, dDateE
     }    
     firstData = firstData + dDateStart; 
     secondData = secondData + dDateEnd;   
-    view(firstData, secondData, differentData, currentObj);
+    $(currentObj).text(firstData + ' - ' + secondData + ', ' + differentData + ' days');
 };
-
-function view(firstData, secondData, differentData, currentObj){
-     outDate = firstData + ' - ' + secondData + ', ' + differentData + ' days';  
-     console.log('view currentObj', currentObj);
-    $(currentObj).text(outDate);
-};
-
 
 });//end
